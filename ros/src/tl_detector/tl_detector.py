@@ -130,7 +130,7 @@ class TLDetector(object):
 
         """
 		# for testing:
-        rospy.logwarn("Light.State= {0}".format(light.state))
+        #rospy.logwarn("Light.State= {0}".format(light.state))
         return light.state 
         #if(not self.has_image):
          #   self.prev_light_loc = None
