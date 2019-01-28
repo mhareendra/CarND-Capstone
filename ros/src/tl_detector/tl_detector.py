@@ -24,6 +24,8 @@ class TLDetector(object):
         self.lights = []
         self.waypoint_tree = None
         self.waypoints_2d = None
+        self.image_index_to_process = 3 # only process this frame
+        self.image_count = 0
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -60,8 +62,8 @@ class TLDetector(object):
     def waypoints_cb(self, waypoints):
         self.waypoints = waypoints
         if not self.waypoints_2d:
-		        self.waypoints_2d = [[waypoint.pose.pose.position.x, 			waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
-		        self.waypoint_tree = KDTree(self.waypoints_2d)        
+            self.waypoints_2d = [[waypoint.pose.pose.position.x, 			waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints]
+            self.waypoint_tree = KDTree(self.waypoints_2d)        
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
@@ -76,6 +78,13 @@ class TLDetector(object):
         """
         self.has_image = True
         self.camera_image = msg
+        self.image_count = self.image_count + 1
+        light_wp = -1
+        state = TrafficLight.UNKNOWN
+        #if self.image_count >= self.image_index_to_process:
+            #light_wp, state = self.process_traffic_lights()
+            #self.image_count = 0
+
         light_wp, state = self.process_traffic_lights()
 
         '''
